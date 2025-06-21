@@ -1,0 +1,108 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }  
+
+/* Centering halaman penuh */
+.page-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 100% tinggi layar */
+    background-color: #f1f5f9;
+  }
+  
+  /* Container form tetap pakai ini */
+  .container {
+    max-width: 500px;
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+  
+  form {
+    width: 100%;
+    margin: 0 auto;
+    
+  }
+  
+  form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #1e293b;
+  }
+  
+  form input[type="text"],
+  form input[type="date"],
+  form select {
+    width: 95%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    transition: border 0.3s, box-shadow 0.3s;
+    background-color: white;
+  }
+  
+  form input:focus,
+  form select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    outline: none;
+  }
+  
+  form button,
+  form a.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+  }
+  
+  form .button {
+    background-color: #10b981;
+    color: white;
+    margin-right: 10px;
+  }
+  
+  form .button:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+  
+  form .button-nilai {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  form .button-nilai:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+  
+  .form-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1e293b;
+    font-size: 22px;
+  }
+
+#nilai {
+  width: 70px;
+}
+
+#sks {
+  width: 70px;
+}
