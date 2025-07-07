@@ -76,7 +76,7 @@ header {
 
 .sidebar a:hover,
 .sidebar a.active {
-  background-color: #1d4ed8;
+  background-color: #56616d;
   font-weight: 600;
   border-left: 4px solid #ffffff;
 }
@@ -224,4 +224,22 @@ table tbody tr:hover {
   font-size: 14px;
   margin-bottom: 12px;
   text-align: center;
+}
+
+#matakuliah_list div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+#matakuliah_list input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+#matakuliah_list label {
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
 }

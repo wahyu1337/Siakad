@@ -5,22 +5,38 @@ $dosen = mysqli_query($conn, "SELECT id, nama FROM dosen");
 $mahasiswa = mysqli_query($conn, "SELECT id, nama FROM mahasiswa");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $username = $_POST['username'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+  $username = trim($_POST['username']);
+  $password_raw = $_POST['password'];
   $role = $_POST['role'];
   $dosen_id = $_POST['dosen_id'] ?? NULL;
   $mahasiswa_id = $_POST['mahasiswa_id'] ?? NULL;
 
-  $simpan = mysqli_query($conn, "INSERT INTO users (username, password, role, dosen_id, mahasiswa_id)
-              VALUES ('$username', '$password', '$role',
-              " . ($dosen_id ? "'$dosen_id'" : "NULL") . ",
-              " . ($mahasiswa_id ? "'$mahasiswa_id'" : "NULL") . ")");
-
-  if ($simpan) {
-    header("Location: ../dashboard/data_users.php");
-    exit;
+  // Validasi wajib isi
+  if (!$username || !$password_raw || !$role) {
+    $error = "Semua field wajib diisi!";
   } else {
-    echo "<p style='color:red;text-align:center;'>Gagal menambahkan user.</p>";
+    // Cek duplikat username
+    $cek = mysqli_query($conn, "SELECT id FROM users WHERE username = '$username'");
+    if (mysqli_num_rows($cek) > 0) {
+      $error = "Username sudah digunakan!";
+    } else {
+      $password = password_hash($password_raw, PASSWORD_DEFAULT);
+
+      $query = "INSERT INTO users (username, password, role, dosen_id, mahasiswa_id) VALUES (
+        '$username', '$password', '$role',
+        " . ($dosen_id ? "'$dosen_id'" : "NULL") . ",
+        " . ($mahasiswa_id ? "'$mahasiswa_id'" : "NULL") . "
+      )";
+
+      $simpan = mysqli_query($conn, $query);
+
+      if ($simpan) {
+        header("Location: ../dashboard/data_users.php");
+        exit;
+      } else {
+        $error = "Gagal menambahkan user: " . mysqli_error($conn);
+      }
+    }
   }
 }
 ?>

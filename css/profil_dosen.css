@@ -1,0 +1,68 @@
+/* ================= PROFIL DOSEN ================= */
+.profil-container {
+  max-width: 500px;
+  margin: 30px auto;
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.profil-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+  color: #1e3a8a;
+}
+
+.profil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profil-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.profil-form input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.profil-form button {
+  padding: 10px 16px;
+  background-color: #2563eb;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+.profil-form button:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-password {
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+  background-color: #f97316;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-password:hover {
+  background-color: #ea580c;
+}

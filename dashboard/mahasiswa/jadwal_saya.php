@@ -10,10 +10,20 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'mahasiswa') {
 
 $mahasiswa_id = $_SESSION['mahasiswa_id'];
 
-// Ambil info mahasiswa
+// Info mahasiswa
 $mhs = mysqli_fetch_assoc(mysqli_query($conn, "SELECT nama, nim FROM mahasiswa WHERE id = $mahasiswa_id"));
 
-// Ambil jadwal berdasarkan KRS mahasiswa
+// Tahun ajaran aktif
+$tahun_aktif = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tahun_ajaran WHERE status_aktif = 1"));
+$tahun_ajaran_id_aktif = $tahun_aktif['id'] ?? 0;
+
+// Ambil semua tahun ajaran
+$tahun_ajaran_all = mysqli_query($conn, "SELECT * FROM tahun_ajaran ORDER BY tahun_mulai DESC, semester DESC");
+
+// Cek filter
+$tahun_terpilih = isset($_GET['tahun_ajaran_id']) ? intval($_GET['tahun_ajaran_id']) : $tahun_ajaran_id_aktif;
+
+// Ambil jadwal sesuai tahun ajaran
 $query = mysqli_query($conn, "
   SELECT 
     mk.nama_mk, 
@@ -29,11 +39,10 @@ $query = mysqli_query($conn, "
   JOIN kelas kls ON k.kelas_id = kls.id
   JOIN dosen d ON j.dosen_id = d.id
   JOIN tahun_ajaran ta ON k.tahun_ajaran_id = ta.id
-  WHERE k.mahasiswa_id = $mahasiswa_id
+  WHERE k.mahasiswa_id = $mahasiswa_id AND k.tahun_ajaran_id = $tahun_terpilih
   ORDER BY FIELD(j.hari, 'Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'), j.jam_mulai
 ");
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -42,6 +51,14 @@ $query = mysqli_query($conn, "
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/dashboard.css">
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #e5f4ff; }
+    .form-control { padding: 6px 10px; margin-right: 10px; }
+    .btn { padding: 6px 12px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    .btn:hover { background: #0056b3; }
+  </style>
 </head>
 <body>
   <header>
@@ -60,6 +77,7 @@ $query = mysqli_query($conn, "
       <a href="krs_saya.php">📄 KRS</a>
       <a href="jadwal_saya.php" class="active">📅 Jadwal Kuliah</a>
       <a href="nilai_saya.php">📝 Nilai</a>
+      <a href="profil/profile_mahasiswa.php">👤 Profil</a>
       <form action="../../logout.php" method="post" class="logout-form">
         <button type="submit" class="logout-button">🔓 Logout</button>
       </form>
@@ -68,6 +86,19 @@ $query = mysqli_query($conn, "
     <div class="page-wrapper">
       <div class="container">
         <h2 class="form-title">Jadwal Saya</h2>
+
+        <form method="get" style="margin-bottom: 20px;">
+          <label for="tahun_ajaran_id">Tahun Ajaran:</label>
+          <select name="tahun_ajaran_id" class="form-control" onchange="this.form.submit()">
+            <?php while ($ta = mysqli_fetch_assoc($tahun_ajaran_all)): 
+              $label = $ta['tahun_mulai'].'/'.$ta['tahun_selesai'].' - '.ucfirst($ta['semester']);
+              $selected = $ta['id'] == $tahun_terpilih ? 'selected' : '';
+            ?>
+              <option value="<?= $ta['id'] ?>" <?= $selected ?>><?= $label ?></option>
+            <?php endwhile; ?>
+          </select>
+        </form>
+
         <table>
           <thead>
             <tr>
@@ -94,7 +125,7 @@ $query = mysqli_query($conn, "
                 </tr>
               <?php endwhile; ?>
             <?php else: ?>
-              <tr><td colspan="7">Tidak ada jadwal ditemukan.</td></tr>
+              <tr><td colspan="7">Tidak ada jadwal ditemukan untuk tahun ajaran ini.</td></tr>
             <?php endif; ?>
           </tbody>
         </table>

@@ -18,12 +18,15 @@ $jurusan = mysqli_query($conn, "SELECT * FROM jurusan ORDER BY nama_jurusan ASC"
     <div class="container">
       <h2 class="form-title">Form Tambah Mahasiswa</h2>
 
-      <form action="../aksi/mahasiswa/simpan_mahasiswa.php" method="post">
+      <form action="../aksi/mahasiswa/simpan_mahasiswa.php" method="post" enctype="multipart/form-data">
         <label for="nim">NIM</label>
         <input type="text" name="nim" required>
 
         <label for="nama">Nama Mahasiswa</label>
         <input type="text" name="nama" required>
+
+        <label for="tanggal_lahir">Tanggal Lahir</label>
+        <input type="date" name="tanggal_lahir" required>
 
         <label for="jenis_kelamin">Jenis Kelamin</label>
         <select name="jenis_kelamin" required>
@@ -39,6 +42,9 @@ $jurusan = mysqli_query($conn, "SELECT * FROM jurusan ORDER BY nama_jurusan ASC"
             <option value="<?= $j['id'] ?>"><?= $j['nama_jurusan'] ?></option>
           <?php endwhile; ?>
         </select>
+
+        <label for="foto">Foto Profil (Opsional)</label>
+        <input type="file" name="foto" accept="image/*">
 
         <button type="submit" class="button">Simpan</button>
         <a href="../dashboard/data_mahasiswa.php" class="button button-kembali">Kembali</a>

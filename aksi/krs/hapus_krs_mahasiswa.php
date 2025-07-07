@@ -2,21 +2,23 @@
 session_start();
 include '../../koneksi.php';
 
+// Pastikan user mahasiswa
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'mahasiswa') {
   header("Location: ../../index.php");
   exit;
 }
 
-$mahasiswa_id = $_SESSION['mahasiswa_id'];
-$id = intval($_GET['id']);
+$mahasiswa_id = $_SESSION['mahasiswa_id'] ?? null;
 
-// Cek kepemilikan data
-$cek = mysqli_query($conn, "SELECT * FROM krs WHERE id = $id AND mahasiswa_id = $mahasiswa_id");
-if (mysqli_num_rows($cek) === 0) {
-  echo "<script>alert('Akses ditolak!'); window.location.href='../../dashboard/mahasiswa/krs_saya.php';</script>";
-  exit;
+// Ambil ID tahun ajaran aktif
+$ta = mysqli_query($conn, "SELECT id FROM tahun_ajaran WHERE status_aktif = 1 LIMIT 1");
+$tahun = mysqli_fetch_assoc($ta);
+$tahun_ajaran_id = $tahun['id'];
+
+// Proses hapus semua KRS semester aktif milik mahasiswa
+if ($mahasiswa_id && $tahun_ajaran_id) {
+  mysqli_query($conn, "DELETE FROM krs WHERE mahasiswa_id = $mahasiswa_id AND tahun_ajaran_id = $tahun_ajaran_id");
 }
 
-mysqli_query($conn, "DELETE FROM krs WHERE id = $id");
-header("Location: ../../dashboard/mahasiswa/krs_saya.php");
+header("Location: ../../dashboard/mahasiswa/krs_saya.php?pesan=hapus");
 exit;

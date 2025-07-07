@@ -29,10 +29,11 @@ $dosen = mysqli_fetch_assoc($result);
 // Hitung jumlah jadwal
 $jumlah_jadwal = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM jadwal WHERE dosen_id = $dosen_id"));
 
-// Hitung jumlah nilai yang sudah diinput oleh dosen (via jadwal)
+// Hitung jumlah nilai yang sudah diinput oleh dosen (via jadwal & krs)
 $jumlah_nilai = mysqli_num_rows(mysqli_query($conn, "
   SELECT n.id FROM nilai n
-  JOIN jadwal j ON n.matakuliah_id = j.matakuliah_id
+  JOIN krs k ON n.krs_id = k.id
+  JOIN jadwal j ON k.jadwal_id = j.id
   WHERE j.dosen_id = $dosen_id
 "));
 ?>
@@ -45,6 +46,47 @@ $jumlah_nilai = mysqli_num_rows(mysqli_query($conn, "
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/dashboard.css">
+  <style>
+    .sidebar-user {
+      color: white;
+      text-align: center;
+      padding: 15px;
+      background-color: #4f46e5;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .sidebar-user strong {
+      font-size: 1.1em;
+      display: block;
+    }
+    .sidebar-user small {
+      color: #ccc;
+      font-size: 0.9em;
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .card {
+      flex: 1;
+      min-width: 200px;
+      background: #eef4fd;
+      padding: 20px;
+      border-left: 5px solid #2c3e50;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+    .card p {
+      font-size: 2em;
+      color: #2c3e50;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -52,32 +94,37 @@ $jumlah_nilai = mysqli_num_rows(mysqli_query($conn, "
       <img src="../logo.png" alt="Logo" class="logo-fixed">
     </div>
     <div class="header-center">
-      <h1>Selamat Datang, <?= htmlspecialchars($dosen['nama']) ?></h1>
-      <p>Dosen - <?= htmlspecialchars($dosen['bidang']) ?> | <?= htmlspecialchars($dosen['email']) ?></p>
+      <h1>Dashboard Dosen</h1>
     </div>
   </header>
 
   <div class="main-content">
     <div class="sidebar">
+      <div class="sidebar-user">
+        <strong><?= htmlspecialchars($dosen['nama']) ?></strong>
+        <small><?= htmlspecialchars($dosen['email']) ?></small>
+      </div>
       <a href="dashboard_dosen.php" class="active">🏠 Dashboard</a>
       <a href="dosen/jadwal_saya.php">📅 Jadwal Saya</a>
       <a href="dosen/input_nilai.php">📝 Input Nilai</a>
-      <a href="dosen/mahasiswa_perkelas.php">👨‍🎓 Mahasiswa Perkelas</a>
-      <form action="../logout.php" method="post" class="logout-form">
+      <a href="dosen/profil/profile_dosen.php">👤 Profil</a>
+      <form action="../logout.php" method="post">
         <button type="submit" class="logout-button">🔓 Logout</button>
       </form>
     </div>
 
     <div class="page-wrapper">
       <div class="container">
-        <h2 class="form-title">Dashboard Dosen</h2>
+        <h2 class="form-title">Selamat Datang, <?= htmlspecialchars($dosen['nama']) ?></h2>
+        <p>Bidang: <?= htmlspecialchars($dosen['bidang']) ?></p>
+
         <div class="dashboard-cards">
           <div class="card">
-            <h3>Jadwal Mengajar</h3>
+            <h3>Total Jadwal Mengajar</h3>
             <p><?= $jumlah_jadwal ?></p>
           </div>
           <div class="card">
-            <h3>Nilai Diinput</h3>
+            <h3>Jumlah Nilai Diinput</h3>
             <p><?= $jumlah_nilai ?></p>
           </div>
         </div>

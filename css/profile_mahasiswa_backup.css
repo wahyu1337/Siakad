@@ -1,0 +1,167 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f8;
+  }
+  
+  .header-left img.logo-fixed {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+  }
+  
+  .header-center h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #2c3e50;
+  }
+  
+  .main-content {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    width: 220px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar-user {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #7f8c8d;
+    padding-bottom: 10px;
+  }
+  
+  .sidebar-user strong {
+    display: block;
+    font-size: 1.1em;
+  }
+  
+  .sidebar a {
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .sidebar a:hover,
+  .sidebar a.active {
+    background-color: #3498db;
+  }
+  
+  .logout-button {
+    background-color: transparent;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px;
+    margin-top: auto;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .logout-button:hover {
+    background-color: #e74c3c;
+  }
+  
+  .page-wrapper {
+    flex: 1;
+    padding: 40px;
+    background-color: #ffffff;
+  }
+  
+  .profil-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .profil-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.4em;
+  }
+  
+  .profil-form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .profil-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  
+  .profil-form button {
+    margin-top: 20px;
+    background-color: #3498db;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    font-size: 1em;
+  }
+  
+  .profil-form button:hover {
+    background-color: #2980b9;
+  }
+  
+  .btn-password {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #27ae60;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+  }
+  
+  .btn-password:hover {
+    background-color: #1e8449;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px;
+    }
+  
+    .sidebar a, .logout-button {
+      padding: 8px 12px;
+      margin: 5px;
+    }
+  
+    .page-wrapper {
+      padding: 20px;
+    }
+  
+    .profil-container {
+      padding: 20px;
+    }
+  }

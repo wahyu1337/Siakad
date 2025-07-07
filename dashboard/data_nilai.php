@@ -7,23 +7,58 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
   exit;
 }
 
-$query = mysqli_query($conn, "
-  SELECT n.id, m.nim, m.nama AS nama_mahasiswa, mk.nama_mk, n.nilai_angka, n.semester
+$keyword = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+$tahun_filter = isset($_GET['tahun_ajaran']) ? intval($_GET['tahun_ajaran']) : 0;
+
+$tahun_opsi = mysqli_query($conn, "SELECT id, tahun_mulai, tahun_selesai, semester FROM tahun_ajaran ORDER BY tahun_mulai DESC, semester DESC");
+
+$sql = "
+  SELECT 
+    n.id,
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    mk.nama_mk,
+    n.nilai_angka,
+    ta.semester AS smt,
+    ta.tahun_mulai,
+    ta.tahun_selesai
   FROM nilai n
-  JOIN mahasiswa m ON n.mahasiswa_id = m.id
-  JOIN matakuliah mk ON n.matakuliah_id = mk.id
-  ORDER BY m.nama ASC
-");
+  JOIN krs k ON n.krs_id = k.id
+  JOIN mahasiswa m ON k.mahasiswa_id = m.id
+  JOIN matakuliah mk ON k.matakuliah_id = mk.id
+  JOIN tahun_ajaran ta ON k.tahun_ajaran_id = ta.id
+  WHERE 1=1
+";
+
+if ($tahun_filter) {
+  $sql .= " AND ta.id = $tahun_filter";
+}
+
+if (!empty($keyword)) {
+  $sql .= " AND (
+    m.nim LIKE '%$keyword%' OR 
+    m.nama LIKE '%$keyword%' OR 
+    mk.nama_mk LIKE '%$keyword%'
+  )";
+}
+
+$sql .= " ORDER BY m.nama ASC, ta.tahun_mulai DESC, ta.semester DESC";
+
+$query = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Data Nilai</title>
+  <title>Data Nilai Mahasiswa</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/dashboard.css">
+  <style>
+    form.filter-form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+    form.filter-form select, form.filter-form input[type="text"] { padding: 5px; font-size: 14px; }
+  </style>
 </head>
 <body>
   <header>
@@ -55,9 +90,23 @@ $query = mysqli_query($conn, "
 
     <div class="page-wrapper">
       <div class="container">
-        <h2 class="form-title">Data Nilai</h2>
+        <h2 class="form-title">Data Nilai Mahasiswa</h2>
 
-        <a href="../penambahan/tambah_nilai.php" class="button">+ Tambah Nilai</a>
+        <form method="get" class="filter-form">
+          <select name="tahun_ajaran" onchange="this.form.submit()">
+            <option value="0">-- Semua Tahun Ajaran --</option>
+            <?php while ($ta = mysqli_fetch_assoc($tahun_opsi)): ?>
+              <?php
+                $label = $ta['tahun_mulai'] . '/' . $ta['tahun_selesai'] . ' - ' . ucfirst($ta['semester']);
+                $selected = ($tahun_filter == $ta['id']) ? 'selected' : '';
+              ?>
+              <option value="<?= $ta['id'] ?>" <?= $selected ?>><?= $label ?></option>
+            <?php endwhile; ?>
+          </select>
+
+          <input type="text" name="search" value="<?= htmlspecialchars($keyword) ?>" placeholder="Cari NIM, Nama, atau Mata Kuliah">
+          <button type="submit">🔍 Cari</button>
+        </form>
 
         <table>
           <thead>
@@ -67,23 +116,24 @@ $query = mysqli_query($conn, "
               <th>Mata Kuliah</th>
               <th>Nilai</th>
               <th>Semester</th>
-              <th>Aksi</th>
+              <th>Tahun Ajaran</th>
             </tr>
           </thead>
           <tbody>
-            <?php while ($row = mysqli_fetch_assoc($query)) { ?>
-              <tr>
-                <td><?= htmlspecialchars($row['nim']) ?></td>
-                <td><?= htmlspecialchars($row['nama_mahasiswa']) ?></td>
-                <td><?= htmlspecialchars($row['nama_mk']) ?></td>
-                <td><?= htmlspecialchars($row['nilai_angka']) ?></td>
-                <td><?= htmlspecialchars($row['semester']) ?></td>
-                <td class="action-links">
-                  <a href="../aksi/nilai/edit_nilai.php?id=<?= $row['id'] ?>">Edit</a> |
-                  <a href="../aksi/nilai/hapus_nilai.php?id=<?= $row['id'] ?>" onclick="return confirm('Hapus data nilai ini?')">Hapus</a>
-                </td>
-              </tr>
-            <?php } ?>
+            <?php if (mysqli_num_rows($query) > 0): ?>
+              <?php while ($row = mysqli_fetch_assoc($query)): ?>
+                <tr>
+                  <td><?= htmlspecialchars($row['nim']) ?></td>
+                  <td><?= htmlspecialchars($row['nama_mahasiswa']) ?></td>
+                  <td><?= htmlspecialchars($row['nama_mk']) ?></td>
+                  <td><?= htmlspecialchars($row['nilai_angka']) ?></td>
+                  <td><?= ucfirst($row['smt']) ?></td>
+                  <td><?= "{$row['tahun_mulai']}/{$row['tahun_selesai']}" ?></td>
+                </tr>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <tr><td colspan="6">Tidak ada data nilai yang sesuai.</td></tr>
+            <?php endif; ?>
           </tbody>
         </table>
       </div>

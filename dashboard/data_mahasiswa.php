@@ -7,7 +7,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
   exit;
 }
 
-$query = mysqli_query($conn, "SELECT m.id, m.nim, m.nama, j.nama_jurusan FROM mahasiswa m JOIN jurusan j ON m.jurusan_id = j.id ORDER BY m.nama ASC");
+$query = mysqli_query($conn, "SELECT m.id, m.nim, m.nama, j.nama_jurusan, m.foto FROM mahasiswa m JOIN jurusan j ON m.jurusan_id = j.id ORDER BY m.nama ASC");
+
 ?>
 
 <!DOCTYPE html>
@@ -53,6 +54,7 @@ $query = mysqli_query($conn, "SELECT m.id, m.nim, m.nama, j.nama_jurusan FROM ma
         <table>
           <thead>
             <tr>
+              <th>Foto</th>
               <th>NIM</th>
               <th>Nama</th>
               <th>Jurusan</th>
@@ -60,17 +62,24 @@ $query = mysqli_query($conn, "SELECT m.id, m.nim, m.nama, j.nama_jurusan FROM ma
             </tr>
           </thead>
           <tbody>
-            <?php while ($row = mysqli_fetch_assoc($query)) { ?>
-              <tr>
-                <td><?= htmlspecialchars($row['nim']) ?></td>
-                <td><?= htmlspecialchars($row['nama']) ?></td>
-                <td><?= htmlspecialchars($row['nama_jurusan']) ?></td>
-                <td class="action-links">
-                  <a href="../aksi/mahasiswa/edit_mahasiswa.php?id=<?= $row['id'] ?>">Edit</a> |
-                  <a href="../aksi/mahasiswa/hapus_mahasiswa.php?id=<?= $row['id'] ?>" onclick="return confirm('Hapus data mahasiswa ini?')">Hapus</a>
-                </td>
-              </tr>
-            <?php } ?>
+          <?php while ($row = mysqli_fetch_assoc($query)) { ?>
+            <tr>
+              <td>
+                <?php if (!empty($row['foto'])): ?>
+                  <img src="../uploads/mahasiswa/<?= htmlspecialchars($row['foto']) ?>" alt="Foto" width="50" height="50" style="object-fit:cover; border-radius:50%;">
+                <?php else: ?>
+                  <span style="color:#999;">-</span>
+                <?php endif; ?>
+              </td>
+              <td><?= htmlspecialchars($row['nim']) ?></td>
+              <td><?= htmlspecialchars($row['nama']) ?></td>
+              <td><?= htmlspecialchars($row['nama_jurusan']) ?></td>
+              <td class="action-links">
+                <a href="../aksi/mahasiswa/edit_mahasiswa.php?id=<?= $row['id'] ?>">Edit</a> |
+                <a href="../aksi/mahasiswa/hapus_mahasiswa.php?id=<?= $row['id'] ?>" onclick="return confirm('Hapus data mahasiswa ini?')">Hapus</a>
+              </td>
+            </tr>
+          <?php } ?>
           </tbody>
         </table>
       </div>
