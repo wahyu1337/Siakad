@@ -45,7 +45,8 @@ if (isset($_POST['login'])) {
       header("Location: dashboard/dashboard_mahasiswa.php");
       exit;
     }
-  }  
+  }
+}  
 ?>
 
 <!DOCTYPE html>
